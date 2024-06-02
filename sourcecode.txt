@@ -1,0 +1,87 @@
+#include<SoftwareSerial.h> 
+SoftwareSerial RFID =  SoftwareSerial(2, 3); //CONNECT TX OF RFID TO 2 of Arduino// 
+String IncomingData; 
+#include <Servo.h> 
+#include <LiquidCrystal.h> 
+LiquidCrystal lcd(A5,A4,A3,A2,A1,A0); 
+Servo servo1; 
+Servo servo2; 
+Servo servo3; 
+#define motor 6 
+ 
+//-------------------------------------// 
+void setup() { 
+  servo1.attach(11); 
+  servo2.attach(9); 
+  servo3.attach(10); 
+  pinMode(motor,OUTPUT); 
+  digitalWrite(motor,HIGH); 
+  RFID.begin(9600); 
+  Serial.begin(9600); 
+  Serial.println("rebooted"); 
+  servo1.write(00); 
+  servo2.write(00); 
+  servo3.write(00); 
+  lcd.begin(16, 2); 
+  lcd.setCursor(0,0); 
+  lcd.print("RFID BASED LIB"); 
+  lcd.setCursor(0,1); 
+  lcd.print("MANGMNT SYSTEM"); 
+delay(5000); 
+  lcd.clear(); 
+} 
+ 
+void loop() {   
+if(RFID.available()){ 
+    IncomingData = RFID.readString(); 
+    Serial.println(IncomingData.substring(0,12)); 
+    if(IncomingData.substring(0,12) == "350064DB008A"){  
+        lcd.setCursor(0,0); lcd.print("PHYSICS BOOK"); 
+        lcd.setCursor(0,1); lcd.print("RETURNED"); 
+        delay(3000); 
+        lcd.clear(); 
+        analogWrite(motor,150); 
+        delay(300); 
+        digitalWrite(motor,HIGH); 
+        delay(2000); 
+        servo1.write(90); 
+        delay(3000);     
+        servo1.write(0); 
+      }   
+      //------------------------------------------------------// 
+    if(IncomingData.substring(0,12) == "350064D9CD45"){  
+        lcd.setCursor(0,0); lcd.print("PYTHON BOOK"); 
+        lcd.setCursor(0,1); lcd.print("RETURNED"); 
+        delay(3000); 
+        lcd.clear(); 
+        analogWrite(motor,150); 
+        delay(800); 
+        digitalWrite(motor,HIGH); 
+ delay(1500); 
+        servo3.write(90); 
+        delay(3000);     
+        servo3.write(0); 
+      } 
+      //------------------------------------------------------// 
+    if(IncomingData.substring(0,12) == "4D00864B34B4"){  
+        lcd.setCursor(0,0); lcd.print("AUTO ENG BOOK"); 
+        lcd.setCursor(0,1); lcd.print("RETURNED"); 
+        delay(3000); 
+        lcd.clear(); 
+        analogWrite(motor,150); 
+        delay(1200); 
+        digitalWrite(motor,HIGH); 
+        delay(2000); 
+        servo2.write(90); 
+        delay(3000);     
+        servo2.write(0); 
+      }     
+      
+  } 
+  digitalWrite(motor,HIGH);  
+   
+      
+  lcd.setCursor(0,0); lcd.print("SCANNING..."); 
+  delay(50); 
+  lcd.setCursor(0,0); lcd.print("           "); 
+} 
